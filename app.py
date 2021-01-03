@@ -180,13 +180,15 @@ while True:
                         speak('Abrindo o seu canal')
                         webbrowser.open(url)
             if frase == 'mudar a minha conta do YouTube':
-                speak('Digite o nome ou link do seu canal')
                 arquivo = open('configs.txt', 'a')
                 arquivo.close()
                 arquivo = open('configs.txt', 'r')
                 ler = arquivo.readlines()
+                tem = False
                 for linha in ler:
                     if 'YouTube:::' in linha:
+                        speak('Digite o nome ou link do seu canal')
+                        tem = True
                         link_conta = str(input('Digite o nome ou link do seu canal: '))
                         arquivo.close()
                         arquivo = open('configs.txt', 'r')
@@ -195,6 +197,9 @@ while True:
                         for linha in ler:
                             if 'YouTube' not in linha:
                                 linhas += linha
+                        arquivo.close()
+                        arquivo = open('configs.txt', 'w')
+                        arquivo.write(linhas)
                         arquivo.close()
                         if 'https://' in link_conta:
                             arquivo = open('configs.txt', 'a')
@@ -220,8 +225,56 @@ while True:
                             os.system('cls')
                             speak('Abrindo o seu canal')
                             webbrowser.open(url)
-                    else:
-                        speak('Você não possui uma conta do YouTube cadastrada pra mudar')
+                if tem ==False:
+                    speak('Você não possui uma conta do YouTube cadastrada pra mudar')
+            if frase == 'mudar a minha conta do github' or frase == 'mudar a minha conta do kit Ruby' or frase == 'mudar a minha conta do Git Hub' or frase == 'mudar a minha conta do kit Rubi':
+                arquivo = open('configs.txt', 'a')
+                arquivo.close()
+                arquivo = open('configs.txt', 'r')
+                ler = arquivo.readlines()
+                tem = False
+                for linha in ler:
+                    if 'YouTube:::' in linha:
+                        speak('Digite o nome ou link do seu canal')
+                        tem = True
+                        link_conta = str(input('Digite o nome ou link do seu canal: '))
+                        arquivo.close()
+                        arquivo = open('configs.txt', 'r')
+                        ler = arquivo.readlines()
+                        linhas = ''
+                        for linha in ler:
+                            if 'YouTube' not in linha:
+                                linhas += linha
+                        arquivo.close()
+                        arquivo = open('configs.txt', 'w')
+                        arquivo.write(linhas)
+                        arquivo.close()
+                        if 'https://' in link_conta:
+                            arquivo = open('configs.txt', 'a')
+                            arquivo.write(f'YouTube:::{link_conta}\n')
+                            arquivo.close()
+                            speak('Canal cadastrado com sucesso')
+                            speak('Abrindo o canal')
+                            webbrowser.open(link_conta)
+                        else:
+                            nome = link_conta
+                            speak('Conferindo link do canal')
+                            driver = webdriver.Chrome(executable_path=os.getcwd()+os.sep+'chromedriver.exe')
+                            str_pesquisar = nome.replace(' ', '+')
+                            driver.get(f'https://www.youtube.com/results?search_query={str_pesquisar}&sp=EgIQAg%253D%253D')
+                            driver.find_element_by_xpath('//*[@id="avatar-section"]/a').click()
+                            url = driver.current_url
+                            sleep(2)
+                            driver.close()
+                            arquivo = open('configs.txt', 'a')
+                            arquivo.write(f'YouTube:::{url}\n')
+                            arquivo.close()
+                            speak('Canal cadastrado com sucesso')
+                            os.system('cls')
+                            speak('Abrindo o seu canal')
+                            webbrowser.open(url)
+                if tem ==False:
+                    speak('Você não possui uma conta do YouTube cadastrada pra mudar')
         except sr.UnknownValueError:
             print('Não Entendi')
             
