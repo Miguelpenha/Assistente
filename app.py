@@ -13,8 +13,6 @@ import webbrowser
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-
-
 def speak(text):
     tts = gTTS(text=text, lang='pt-br', slow=False)
     filename ='voz.mp3'
@@ -273,9 +271,8 @@ while True:
                             os.system('cls')
                             speak('Abrindo o seu canal')
                             webbrowser.open(url)
-                if tem ==False:
+                if tem == False:
                     speak('Você não possui uma conta do YouTube cadastrada pra mudar')
         except sr.UnknownValueError:
             print('Não Entendi')
-            
         ok = False
