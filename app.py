@@ -19,6 +19,20 @@ def speak(text):
     tts.save(filename)
     play(filename)
     remove(filename)
+def contas(conta, existir=False):
+    arquivo = open('configs.txt', 'r')
+    ler = arquivo.readlines()
+    achou = False
+    for linha in ler:
+        if f'{conta}:::' in linha:
+            achou = True
+            if not existir:
+                return linha.split(f'{conta}:::')[1]
+            else:
+                return True
+    if achou == False:
+        return False
+    arquivo.close()
 r = sr.Recognizer()
 continua = False
 while True:
@@ -34,7 +48,12 @@ while True:
                 continua = True
             if frase == 'sair':
                 speak('saindo')
+                print(contas('YouTube'))
                 continua = False
+                try:
+                    os.remove('./debug.log')
+                except:
+                    print('')
                 sys.exit()
                 quit()
             if frase == 'Que horas são':
@@ -276,3 +295,8 @@ while True:
         except sr.UnknownValueError:
             print('Não Entendi')
         ok = False
+
+try:
+    os.remove('./debug.log')
+except:
+    print('')
