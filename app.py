@@ -19,7 +19,7 @@ def speak(text):
     tts.save(filename)
     play(filename)
     remove(filename)
-def contas(conta, existir=False):
+def buscasContas(conta, existir=False):
     arquivo = open('configs.txt', 'r')
     ler = arquivo.readlines()
     achou = False
@@ -33,8 +33,33 @@ def contas(conta, existir=False):
     if achou == False:
         return False
     arquivo.close()
+def mudarConta(conta, nova, UVA=False):
+    if UVA == True:
+        arquivo = open('configs.txt', 'r')
+        ler = arquivo.readlines()
+        existe = False
+        for linha in ler:
+            if conta in linha:
+                existe = True
+        if existe == False:
+            arquivo = open('configs.txt', 'a')
+            arquivo.write(f'{conta}:::{nova}')
+            quit()
+        arquivo.close()
+    lista_contas = ''
+    arquivo = open('configs.txt', 'r')
+    ler = arquivo.readlines()
+    for linha in ler:
+        if f'{conta}:::' not in linha:
+            lista_contas += linha
+    arquivo.close()
+    lista_contas += f'{conta}:::{nova}\n'
+    arquivo = open('configs.txt', 'w')
+    arquivo.write(lista_contas)
+    arquivo.close()
 r = sr.Recognizer()
 continua = False
+
 while True:
     if kb.is_pressed('alt+b') or continua == True:
         with sr.Microphone() as source:
@@ -48,7 +73,6 @@ while True:
                 continua = True
             if frase == 'sair':
                 speak('saindo')
-                print(contas('YouTube'))
                 continua = False
                 try:
                     os.remove('./debug.log')
@@ -117,18 +141,9 @@ while True:
                     pesquisar = frase.replace('YouTube', '').replace(' ', '+')
                     webbrowser.open(f'https://www.youtube.com/results?search_query={pesquisar[1:]}')
             if frase == 'abrir o meu github' or frase == 'abrir o meu kit Ruby' or frase == 'abrir o meu Git Hub' or frase == 'abrir o meu kit Rubi':
-                arquivo = open('configs.txt', 'a')
-                arquivo.close()
-                arquivo = open('configs.txt', 'r')
-                ler = arquivo.readlines()
-                tem = False
-                for linha in ler:
-                    if 'GitHub:::' in linha:
-                        tem = True
-                        conta = linha.replace('GitHub:::', '')
-                arquivo.close()
-                if tem == True:
+                if buscasContas('GitHub', existir=True) == True:
                     speak('Abrindo o seu GitHub')
+                    conta = buscasContas('GitHub')
                     webbrowser.open(f'https://github.com/{conta}')
                 else:
                     speak('Sua conta do GitHub não está cadastrada ainda, por favor digite o nome da sua conta')
@@ -196,7 +211,7 @@ while True:
                         os.system('cls')
                         speak('Abrindo o seu canal')
                         webbrowser.open(url)
-            if frase == 'mudar a minha conta do YouTube':
+            if frase == 'mudar a minha conta do YouTube' or frase == 'mudar minha conta do YouTube':
                 arquivo = open('configs.txt', 'a')
                 arquivo.close()
                 arquivo = open('configs.txt', 'r')
@@ -208,36 +223,21 @@ while True:
                         tem = True
                         link_conta = str(input('Digite o nome ou link do seu canal: '))
                         arquivo.close()
-                        arquivo = open('configs.txt', 'r')
-                        ler = arquivo.readlines()
-                        linhas = ''
-                        for linha in ler:
-                            if 'YouTube' not in linha:
-                                linhas += linha
-                        arquivo.close()
-                        arquivo = open('configs.txt', 'w')
-                        arquivo.write(linhas)
-                        arquivo.close()
+                        mudarConta('YouTube', link_conta)
                         if 'https://' in link_conta:
-                            arquivo = open('configs.txt', 'a')
-                            arquivo.write(f'YouTube:::{link_conta}\n')
-                            arquivo.close()
                             speak('Canal cadastrado com sucesso')
                             speak('Abrindo o canal')
                             webbrowser.open(link_conta)
                         else:
-                            nome = link_conta
                             speak('Conferindo link do canal')
                             driver = webdriver.Chrome(executable_path=os.getcwd()+os.sep+'chromedriver.exe')
-                            str_pesquisar = nome.replace(' ', '+')
+                            str_pesquisar = link_conta.replace(' ', '+')
                             driver.get(f'https://www.youtube.com/results?search_query={str_pesquisar}&sp=EgIQAg%253D%253D')
                             driver.find_element_by_xpath('//*[@id="avatar-section"]/a').click()
                             url = driver.current_url
                             sleep(2)
                             driver.close()
-                            arquivo = open('configs.txt', 'a')
-                            arquivo.write(f'YouTube:::{url}\n')
-                            arquivo.close()
+                            mudarConta('YouTube', url)
                             speak('Canal cadastrado com sucesso')
                             os.system('cls')
                             speak('Abrindo o seu canal')
@@ -251,51 +251,46 @@ while True:
                 ler = arquivo.readlines()
                 tem = False
                 for linha in ler:
-                    if 'YouTube:::' in linha:
-                        speak('Digite o nome ou link do seu canal')
+                    if 'GitHub:::' in linha:
+                        speak('Digite o nome ou link da sua conta')
                         tem = True
-                        link_conta = str(input('Digite o nome ou link do seu canal: '))
+                        os.system('cls')
+                        link_conta = str(input('Digite o nome ou link do seu GitHub: '))
                         arquivo.close()
-                        arquivo = open('configs.txt', 'r')
-                        ler = arquivo.readlines()
-                        linhas = ''
-                        for linha in ler:
-                            if 'YouTube' not in linha:
-                                linhas += linha
-                        arquivo.close()
-                        arquivo = open('configs.txt', 'w')
-                        arquivo.write(linhas)
-                        arquivo.close()
+                        if 'https://github.com/' in link_conta:
+                            mudarConta('GitHub', link_conta.replace('https://github.com/', ''))
+                        else:
+                            mudarConta('GitHub', link_conta)
                         if 'https://' in link_conta:
                             arquivo = open('configs.txt', 'a')
-                            arquivo.write(f'YouTube:::{link_conta}\n')
+                            arquivo.write(f'GitHub:::{link_conta}\n')
                             arquivo.close()
-                            speak('Canal cadastrado com sucesso')
-                            speak('Abrindo o canal')
+                            speak('Conta cadastrado com sucesso')
+                            speak('Abrindo a conta')
                             webbrowser.open(link_conta)
                         else:
-                            nome = link_conta
-                            speak('Conferindo link do canal')
-                            driver = webdriver.Chrome(executable_path=os.getcwd()+os.sep+'chromedriver.exe')
-                            str_pesquisar = nome.replace(' ', '+')
-                            driver.get(f'https://www.youtube.com/results?search_query={str_pesquisar}&sp=EgIQAg%253D%253D')
-                            driver.find_element_by_xpath('//*[@id="avatar-section"]/a').click()
-                            url = driver.current_url
-                            sleep(2)
-                            driver.close()
-                            arquivo = open('configs.txt', 'a')
-                            arquivo.write(f'YouTube:::{url}\n')
-                            arquivo.close()
-                            speak('Canal cadastrado com sucesso')
-                            os.system('cls')
-                            speak('Abrindo o seu canal')
-                            webbrowser.open(url)
+                            speak('Conta cadastrado com sucesso')
+                            speak('Abrindo a conta')
+                            webbrowser.open(f'https://github.com/{link_conta}')
                 if tem == False:
-                    speak('Você não possui uma conta do YouTube cadastrada pra mudar')
+                    speak('Você não possui uma conta do GitHub cadastrada pra mudar')
         except sr.UnknownValueError:
             print('Não Entendi')
         ok = False
-
+    if dt.now().month <= 9:
+        mes = f'0{dt.now().month}'
+    else:
+        mes = str(dt.now().month)
+    if dt.now().hour <= 9:
+        hora = f'0{dt.now().hour}'
+    else:
+        mes = str(dt.now().hour)
+    if dt.now().minute <= 9:
+        minutos = f'0{dt.now().minute}'
+    else:
+        minutos = str(dt.now().minute)
+    data = f'{dt.now().day}/{mes}/{dt.now().year} {hora}:{minutos}'
+    mudarConta('UVA', data, UVA=True)
 try:
     os.remove('./debug.log')
 except:
