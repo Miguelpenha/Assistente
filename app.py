@@ -1,8 +1,5 @@
-from gtts import gTTS
-from os import remove
 import os
 from time import sleep
-from playsound import playsound as play
 import speech_recognition as sr
 import keyboard as kb
 import sys
@@ -12,54 +9,10 @@ import urllib
 import webbrowser
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from funções import *
 
-def speak(text):
-    tts = gTTS(text=text, lang='pt-br', slow=False)
-    filename ='voz.mp3'
-    tts.save(filename)
-    play(filename)
-    remove(filename)
-def buscasContas(conta, existir=False):
-    arquivo = open('configs.txt', 'r')
-    ler = arquivo.readlines()
-    achou = False
-    for linha in ler:
-        if f'{conta}:::' in linha:
-            achou = True
-            if not existir:
-                return linha.split(f'{conta}:::')[1]
-            else:
-                return True
-    if achou == False:
-        return False
-    arquivo.close()
-def mudarConta(conta, nova, UVA=False):
-    if UVA == True:
-        arquivo = open('configs.txt', 'r')
-        ler = arquivo.readlines()
-        existe = False
-        for linha in ler:
-            if conta in linha:
-                existe = True
-        if existe == False:
-            arquivo = open('configs.txt', 'a')
-            arquivo.write(f'{conta}:::{nova}')
-            quit()
-        arquivo.close()
-    lista_contas = ''
-    arquivo = open('configs.txt', 'r')
-    ler = arquivo.readlines()
-    for linha in ler:
-        if f'{conta}:::' not in linha:
-            lista_contas += linha
-    arquivo.close()
-    lista_contas += f'{conta}:::{nova}\n'
-    arquivo = open('configs.txt', 'w')
-    arquivo.write(lista_contas)
-    arquivo.close()
 r = sr.Recognizer()
 continua = False
-
 while True:
     if kb.is_pressed('alt+b') or continua == True:
         with sr.Microphone() as source:
@@ -284,7 +237,7 @@ while True:
     if dt.now().hour <= 9:
         hora = f'0{dt.now().hour}'
     else:
-        mes = str(dt.now().hour)
+        hora = str(dt.now().hour)
     if dt.now().minute <= 9:
         minutos = f'0{dt.now().minute}'
     else:
