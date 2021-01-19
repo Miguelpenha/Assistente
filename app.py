@@ -9,6 +9,8 @@ import urllib
 import webbrowser
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+import requests
+import json
 from funções import *
 
 r = sr.Recognizer()
@@ -107,6 +109,7 @@ while True:
                     arquivo.write(f'GitHub:::{conta}\n')
                     speak('Abrindo o seu GitHub')
                     webbrowser.open(f'https://github.com/{conta}')
+                    arquivo.close()
             if len(frase.split(' ')) >= 2:
                 if frase.split(' ')[0] == 'github' or str(frase.split(' ')[0]+' '+frase.split(' ')[1]) == 'kit Ruby' or str(frase.split(' ')[0]+' '+frase.split(' ')[1]) == 'Git Hub' or str(frase.split(' ')[0]+' '+frase.split(' ')[1]) == 'kit Rubi':
                     if frase.split(' ')[0] == 'github':
@@ -227,6 +230,21 @@ while True:
                             webbrowser.open(f'https://github.com/{link_conta}')
                 if tem == False:
                     speak('Você não possui uma conta do GitHub cadastrada pra mudar')
+            if frase == 'teste':
+                if buscasContas('GitHub', existir=True) == True:
+                    conta = str(buscasContas('GitHub'))
+                    conta = str(f'{conta.strip()}')
+                    link = str(f'https://api.github.com/users/{conta}/repos')
+                    dados = requests.get(link)
+                    if dados.status_code == 200:
+                        dados_api = dados.json()
+                        if type(dados_api) is not int:
+                            for i in range(len(dados_api)):
+                                print(dados_api[i]['name'])
+                        else:
+                            print(dados_api)
+                else:
+                    speak('Você não possui uma conta do GitHub')
         except sr.UnknownValueError:
             print('Não Entendi')
         ok = False

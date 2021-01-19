@@ -32,7 +32,8 @@ def mudarConta(conta, nova, UVA=False):
                 existe = True
         if existe == False:
             arquivo = open('configs.txt', 'a')
-            arquivo.write(f'{conta}:::{nova}')
+            arquivo.write(f'{conta}:::{nova}\n')
+            arquivo.close()
             quit()
         arquivo.close()
     lista_contas = ''
