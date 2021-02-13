@@ -262,6 +262,7 @@ while True:
         minutos = str(dt.now().minute)
     data = f'{dt.now().day}/{mes}/{dt.now().year} {hora}:{minutos}'
     mudarConta('UVA', data, UVA=True)
+
 try:
     os.remove('./debug.log')
 except:
